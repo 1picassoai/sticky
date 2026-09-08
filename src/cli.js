@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 // STICKY — one entry point, two modes.
 //
-//   npx @juvina/sticky          opens the board in your browser
-//   npx @juvina/sticky --mcp    runs as an MCP server over stdio (what agents launch)
+//   npx sticky-mcp          opens the board in your browser
+//   npx sticky-mcp --mcp    runs as an MCP server over stdio (what agents launch)
 //
 // The same SQLite file backs both, so a card the agent posts appears on the board
 // immediately and a card you drag is what the agent reads next.
@@ -24,8 +24,8 @@ if (args.includes("--help") || args.includes("-h")) {
   console.log(`
 STICKY — a visual board your coding agent can write to.
 
-  npx @juvina/sticky                 open the board
-  npx @juvina/sticky --mcp           run as an MCP server (agents launch this)
+  npx sticky-mcp                 open the board
+  npx sticky-mcp --mcp           run as an MCP server (agents launch this)
 
   --cap <n>      how many active notes before the oldest tumbles (default 10)
   --port <n>     board port (default ${DEFAULT_PORT})
@@ -33,7 +33,7 @@ STICKY — a visual board your coding agent can write to.
   --no-open      start the server without opening a browser
 
 Wire it to Claude Code:
-  claude mcp add sticky -- npx -y @juvina/sticky --mcp
+  claude mcp add sticky -- npx -y sticky-mcp --mcp
 `);
   process.exit(0);
 }
@@ -55,7 +55,7 @@ if (args.includes("--mcp")) {
   // a crash is worse than a plain failure.
   server.on("listening", () => {
     console.log(`STICKY is on ${url}   (${store.list("active").length}/${cap} active)`);
-    console.log(`Agent:  claude mcp add sticky -- npx -y @juvina/sticky --mcp`);
+    console.log(`Agent:  claude mcp add sticky -- npx -y sticky-mcp --mcp`);
 
     if (!args.includes("--no-open")) {
       const cmd = process.platform === "win32" ? "cmd" : process.platform === "darwin" ? "open" : "xdg-open";

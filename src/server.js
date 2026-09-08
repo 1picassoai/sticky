@@ -120,7 +120,7 @@ export function startServer(store, port = DEFAULT_PORT) {
     if (e.code === "EADDRINUSE" || e.code === "EACCES") {
       console.error(
         `\nPort ${port} is already in use.\n` +
-          `Something else is on it — try: npx @juvina/sticky --port ${port + 1}\n`
+          `Something else is on it — try: npx sticky-mcp --port ${port + 1}\n`
       );
     } else {
       console.error(`\nSTICKY could not start: ${e.message}\n`);

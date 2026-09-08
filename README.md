@@ -9,7 +9,7 @@ STICKY holds **ten active notes**. When the eleventh arrives, the oldest one tum
 archive on its own. Nothing to prune, nothing to garden.
 
 ```bash
-npx @juvina/sticky
+npx sticky-mcp
 ```
 
 That's it. The board opens in your browser. No account, no cloud, no config.
@@ -19,11 +19,11 @@ That's it. The board opens in your browser. No account, no cloud, no config.
 ## Wire it to your agent
 
 ```bash
-claude mcp add sticky -- npx -y @juvina/sticky --mcp
+claude mcp add sticky -- npx -y sticky-mcp --mcp
 ```
 
 Cursor, Cline, Windsurf and anything else that speaks MCP work the same way — point them at
-`npx -y @juvina/sticky --mcp`.
+`npx -y sticky-mcp --mcp`.
 
 Your agent gets two tools:
 
@@ -65,8 +65,8 @@ the local server itself.
 ## Options
 
 ```
-npx @juvina/sticky                 open the board
-npx @juvina/sticky --mcp           run as an MCP server (agents launch this)
+npx sticky-mcp                 open the board
+npx sticky-mcp --mcp           run as an MCP server (agents launch this)
 
   --cap <n>      active notes before the oldest tumbles (default 10)
   --port <n>     board port (default 7317)
