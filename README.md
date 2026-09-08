@@ -19,11 +19,11 @@ That's it. The board opens in your browser. No account, no cloud, no config.
 ## Wire it to your agent
 
 ```bash
-claude mcp add sticky -- npx sticky-mcp --mcp
+claude mcp add sticky -- npx sticky-mcp-server
 ```
 
 Cursor, Cline, Windsurf and anything else that speaks MCP work the same way — point them at
-`npx sticky-mcp --mcp`.
+`npx sticky-mcp-server`.
 
 Or add it to your MCP config by hand:
 
@@ -32,14 +32,15 @@ Or add it to your MCP config by hand:
   "mcpServers": {
     "sticky": {
       "command": "npx",
-      "args": ["-y", "sticky-mcp", "--mcp"]
+      "args": ["-y", "sticky-mcp-server"]
     }
   }
 }
 ```
 
-> Some CLIs read `-y` as their own flag rather than passing it through, so it is left off the
-> command line above and kept in the JSON, where nothing can mistake it for anything else.
+> `sticky-mcp-server` takes no flags on purpose. Some CLIs — Claude Code among them — read
+> `-y` and `--mcp` as their own options and never pass them through, so a command with
+> nothing after it is the only one that works everywhere.
 
 Your agent gets two tools:
 
