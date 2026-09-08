@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>STICKY</title>
+<link rel="stylesheet" href="/sticky.css">
+</head>
+<body>
+
+<header class="bar">
+  <div class="brand">
+    <span class="wordmark">STICKY</span>
+    <span class="pill" id="status"><i class="dot waiting"></i><span>waiting for agent</span></span>
+  </div>
+  <div class="badge" id="tokens" title="rough size of what the agent sees">~0 tokens active</div>
+  <div class="tools">
+    <button id="new" title="new note">+ New</button>
+    <button id="settings" title="settings">&#9881;</button>
+  </div>
+</header>
+
+<main class="board">
+  <section class="col" data-column="pinned">
+    <h2><span class="pin-glyph">&#128204;</span> Pinned <small>rules that always apply</small></h2>
+    <div class="cards" id="col-pinned"></div>
+  </section>
+
+  <section class="col" data-column="active">
+    <h2>Active <small><span id="count">0 / 10</span></small></h2>
+    <div class="cards" id="col-active"></div>
+  </section>
+
+  <section class="col archive" data-column="archive">
+    <h2>Archive <small>zero tokens</small></h2>
+    <div class="cards" id="col-archive"></div>
+  </section>
+</main>
+
+<dialog id="settings-modal">
+  <h3>Settings</h3>
+  <label>Active capacity
+    <input type="range" id="cap" min="5" max="20" step="1">
+    <output id="cap-out"></output>
+  </label>
+  <p class="hint">Open as a borderless window:<br>
+    <code id="app-cmd">chrome --app=http://localhost:4317</code></p>
+  <div class="row">
+    <button id="export">Export to markdown</button>
+    <button id="purge" class="danger">Purge archive</button>
+  </div>
+  <button id="close-settings" class="primary">Done</button>
+</dialog>
+
+<script type="module" src="/sticky.js"></script>
+</body>
+</html>

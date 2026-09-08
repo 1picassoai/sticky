@@ -1,0 +1,13 @@
+{
+  "name": "@juvina/sticky",
+  "version": "0.1.0",
+  "description": "A visual board your AI coding agent can write to. Ten notes max, oldest tumbles to archive, so your context never bloats. Local, no account, no cloud.",
+  "type": "module",
+  "bin": { "sticky": "src/cli.js" },
+  "main": "src/store.js",
+  "files": ["src", "public", "README.md"],
+  "engines": { "node": ">=22.5.0" },
+  "license": "MIT",
+  "homepage": "https://juvina.ai",
+  "keywords": ["mcp","model-context-protocol","claude","claude-code","cursor","copilot","context","agent","notes","board","persistent","sticky"]
+}
