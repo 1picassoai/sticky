@@ -1,0 +1,31 @@
+# Smithery listing for STICKY.
+# https://smithery.ai/docs/build/publish
+
+runtime: typescript
+
+startCommand:
+  type: stdio
+  commandFunction: |
+    (config) => ({
+      command: 'npx',
+      args: ['-y', 'sticky-mcp', '--mcp'],
+      env: {
+        ...(config.dbPath ? { STICKY_DB: config.dbPath } : {}),
+        ...(config.activeCap ? { STICKY_CAP: String(config.activeCap) } : {})
+      }
+    })
+  configSchema:
+    type: object
+    properties:
+      dbPath:
+        type: string
+        title: Board location
+        description: Where the board is stored. Defaults to ~/.sticky/store.db
+      activeCap:
+        type: integer
+        title: Active notes before the oldest tumbles
+        description: How many notes stay in the agent's context. Default 10.
+        default: 10
+        minimum: 5
+        maximum: 20
+    required: []

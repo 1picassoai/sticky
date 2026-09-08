@@ -53,8 +53,11 @@ Wire it to Claude Code:
   process.exit(0);
 }
 
-const db = flag("db", join(homedir(), ".sticky", "store.db"));
-const cap = Number(flag("cap", 10));
+// Env vars as well as flags: agent hosts (Smithery, Claude Desktop, Cursor) configure a
+// server through its environment, not its command line, and a flag they cannot pass is a
+// setting they cannot change. Flags still win when both are given.
+const db = flag("db", process.env.STICKY_DB || join(homedir(), ".sticky", "store.db"));
+const cap = Number(flag("cap", process.env.STICKY_CAP || 10));
 const store = new Store(db, cap);
 
 if (mcpMode) {
@@ -69,8 +72,14 @@ if (mcpMode) {
   // Nothing is announced until the socket is actually bound — a success line followed by
   // a crash is worse than a plain failure.
   server.on("listening", () => {
-    console.log(`STICKY is on ${url}   (${store.list("active").length}/${cap} active)`);
-    console.log(`Agent:  claude mcp add sticky -- npx sticky-mcp-server`);
+    const n = store.list("active").length;
+    console.log(`\n  STICKY is open at ${url}`);
+    console.log(`  ${n}/${cap} active notes. Leave this running; Ctrl+C stops it.\n`);
+
+    // This line read as a command the user still had to run, so people ran it and wondered
+    // why nothing had waited for them. It is optional, it is one-off, and it says so now.
+    console.log(`  To let your agent write to the board (one time, in another terminal):`);
+    console.log(`    claude mcp add sticky -- npx sticky-mcp-server\n`);
 
     if (!args.includes("--no-open")) {
       const cmd = process.platform === "win32" ? "cmd" : process.platform === "darwin" ? "open" : "xdg-open";

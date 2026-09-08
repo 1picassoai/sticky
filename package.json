@@ -1,32 +1,40 @@
 {
-  "name": "sticky-mcp",
-  "version": "0.2.0",
-  "description": "A visual board your AI coding agent can write to. Ten active notes; the oldest tumbles to the archive on its own, so the agent's context stays bounded instead of growing forever. Local, no account, no cloud.",
-  "type": "module",
-  "bin": {
-    "sticky-mcp": "src/cli.js",
-    "sticky-mcp-server": "src/sticky-mcp-server.js"
-  },
-  "main": "src/store.js",
-  "files": ["src", "public", "README.md"],
-  "engines": { "node": ">=22.5.0" },
-  "license": "MIT",
-  "homepage": "https://juvina.ai",
-  "repository": { "type": "git", "url": "git+https://github.com/1picassoai/sticky.git" },
-  "mcpName": "io.github.1picassoai/sticky",
-  "keywords": [
-    "mcp",
-    "model-context-protocol",
-    "claude",
-    "claude-code",
-    "cursor",
-    "copilot",
-    "context",
-    "agent",
-    "memory",
-    "persistent",
-    "notes",
-    "board",
-    "sticky"
-  ]
+    "name":  "sticky-mcp",
+    "version":  "0.2.3",
+    "description":  "A visual board your AI coding agent can write to. Ten active notes; the oldest tumbles to the archive on its own, so the agent\u0027s context stays bounded instead of growing forever. Local, no account, no cloud.",
+    "type":  "module",
+    "bin":  {
+                "sticky-mcp":  "src/cli.js"
+            },
+    "main":  "src/store.js",
+    "files":  [
+                  "src",
+                  "public",
+                  "README.md"
+              ],
+    "engines":  {
+                    "node":  "\u003e=22.5.0"
+                },
+    "license":  "MIT",
+    "homepage":  "https://juvina.ai",
+    "repository":  {
+                       "type":  "git",
+                       "url":  "git+https://github.com/1picassoai/sticky.git"
+                   },
+    "mcpName":  "io.github.1picassoai/sticky",
+    "keywords":  [
+                     "mcp",
+                     "model-context-protocol",
+                     "claude",
+                     "claude-code",
+                     "cursor",
+                     "copilot",
+                     "context",
+                     "agent",
+                     "memory",
+                     "persistent",
+                     "notes",
+                     "board",
+                     "sticky"
+                 ]
 }
