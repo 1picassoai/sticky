@@ -33,14 +33,24 @@ test("the cap holds and the OLDEST card tumbles", () => {
   s.close();
 });
 
-test("pinned cards never tumble and have no cap", () => {
+test("pinned cards never tumble, and pinned has its own cap", () => {
   const s = fresh(3);
   for (let i = 1; i <= 5; i++) s.post({ content: `rule ${i}`, column: "pinned" });
-  assert.equal(s.list("pinned").length, 5, "pinned is uncapped");
+  assert.equal(s.list("pinned").length, 5);
 
+  // Active churn must never cost a rule — that is the promise pinning makes.
   for (let i = 1; i <= 10; i++) s.post({ content: `note ${i}` });
-  assert.equal(s.list("pinned").length, 5, "pinned survives any amount of churn");
+  assert.equal(s.list("pinned").length, 5, "no rule is lost to active overflow");
   assert.equal(s.list("active").length, 3);
+
+  // But pinned is NOT unbounded. It refuses past its own cap rather than dropping a rule,
+  // because an uncapped pinned column would grow the prompt forever — the exact failure
+  // this product exists to prevent.
+  assert.equal(s.pinnedCap, 15);
+  for (let i = 6; i <= 15; i++) s.post({ content: `rule ${i}`, column: "pinned" });
+  assert.equal(s.list("pinned").length, 15, "fills to the cap");
+  assert.throws(() => s.post({ content: "rule 16", column: "pinned" }), /pinned column is full/);
+  assert.equal(s.list("pinned").length, 15, "and refuses without losing one");
   s.close();
 });
 

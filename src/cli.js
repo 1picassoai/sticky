@@ -28,7 +28,7 @@ STICKY — a visual board your coding agent can write to.
   npx @juvina/sticky --mcp           run as an MCP server (agents launch this)
 
   --cap <n>      how many active notes before the oldest tumbles (default 10)
-  --port <n>     board port (default 4317)
+  --port <n>     board port (default ${DEFAULT_PORT})
   --db <path>    where the board lives (default ~/.sticky/store.db)
   --no-open      start the server without opening a browser
 
