@@ -1,4 +1,5 @@
 # STICKY
+<img width="924" height="265" alt="image" src="https://github.com/user-attachments/assets/140760b9-e635-461b-a7e1-466b48d98a13" />
 
 **A board your coding agent can write to — and you can see.**
 
