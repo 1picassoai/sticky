@@ -1,6 +1,6 @@
 {
     "name":  "sticky-mcp",
-    "version":  "0.1.0",
+    "version":  "0.1.2",
     "description":  "A visual board your AI coding agent can write to. Ten active notes; the oldest tumbles to the archive on its own, so the agent\u0027s context stays bounded instead of growing forever. Local, no account, no cloud.",
     "type":  "module",
     "bin":  {
@@ -30,5 +30,10 @@
                      "board",
                      "persistent",
                      "sticky"
-                 ]
+                 ],
+    "mcpName":  "io.github.1picassoai/sticky",
+    "repository":  {
+                       "type":  "git",
+                       "url":  "git+https://github.com/1picassoai/sticky.git"
+                   }
 }

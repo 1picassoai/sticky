@@ -33,7 +33,7 @@ STICKY — a visual board your coding agent can write to.
   --no-open      start the server without opening a browser
 
 Wire it to Claude Code:
-  claude mcp add sticky -- npx -y sticky-mcp --mcp
+  claude mcp add sticky -- npx sticky-mcp --mcp
 `);
   process.exit(0);
 }
@@ -55,7 +55,7 @@ if (args.includes("--mcp")) {
   // a crash is worse than a plain failure.
   server.on("listening", () => {
     console.log(`STICKY is on ${url}   (${store.list("active").length}/${cap} active)`);
-    console.log(`Agent:  claude mcp add sticky -- npx -y sticky-mcp --mcp`);
+    console.log(`Agent:  claude mcp add sticky -- npx sticky-mcp --mcp`);
 
     if (!args.includes("--no-open")) {
       const cmd = process.platform === "win32" ? "cmd" : process.platform === "darwin" ? "open" : "xdg-open";

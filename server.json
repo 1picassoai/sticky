@@ -2,14 +2,14 @@
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-09-29/server.schema.json",
   "name": "io.github.1picassoai/sticky",
   "description": "A board your agent writes to. Persistent memory, capped so context never grows.",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "websiteUrl": "https://juvina.ai",
   "repository": { "url": "https://github.com/1picassoai/sticky", "source": "github" },
   "packages": [
     {
       "registryType": "npm",
       "identifier": "sticky-mcp",
-      "version": "0.1.0",
+      "version": "0.1.1",
       "transport": { "type": "stdio" },
       "runtimeArguments": [
         { "type": "positional", "value": "--mcp", "isRequired": true, "valueHint": "--mcp" }
