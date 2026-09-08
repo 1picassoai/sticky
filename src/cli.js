@@ -12,7 +12,7 @@ import { join } from "node:path";
 import { homedir } from "node:os";
 import { Store } from "./store.js";
 import { serve } from "./mcp.js";
-import { startServer } from "./server.js";
+import { startServer, DEFAULT_PORT } from "./server.js";
 
 const args = process.argv.slice(2);
 const flag = (name, fallback) => {
@@ -47,15 +47,20 @@ if (args.includes("--mcp")) {
   // JSON-RPC corrupts the stream, so this mode stays silent.
   serve(store);
 } else {
-  const port = Number(flag("port", 4317));
+  const port = Number(flag("port", DEFAULT_PORT));
   const url = `http://localhost:${port}`;
-  startServer(store, port);
-  console.log(`STICKY is on ${url}   (${store.list("active").length}/${cap} active)`);
-  console.log(`Agent:  claude mcp add sticky -- npx -y @juvina/sticky --mcp`);
+  const server = startServer(store, port);
 
-  if (!args.includes("--no-open")) {
-    const cmd = process.platform === "win32" ? "cmd" : process.platform === "darwin" ? "open" : "xdg-open";
-    const cmdArgs = process.platform === "win32" ? ["/c", "start", "", url] : [url];
-    spawn(cmd, cmdArgs, { detached: true, stdio: "ignore" }).unref();
-  }
+  // Nothing is announced until the socket is actually bound — a success line followed by
+  // a crash is worse than a plain failure.
+  server.on("listening", () => {
+    console.log(`STICKY is on ${url}   (${store.list("active").length}/${cap} active)`);
+    console.log(`Agent:  claude mcp add sticky -- npx -y @juvina/sticky --mcp`);
+
+    if (!args.includes("--no-open")) {
+      const cmd = process.platform === "win32" ? "cmd" : process.platform === "darwin" ? "open" : "xdg-open";
+      const cmdArgs = process.platform === "win32" ? ["/c", "start", "", url] : [url];
+      spawn(cmd, cmdArgs, { detached: true, stdio: "ignore" }).unref();
+    }
+  });
 }

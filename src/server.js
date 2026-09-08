@@ -12,7 +12,11 @@ import { fileURLToPath } from "node:url";
 const PUBLIC = join(dirname(fileURLToPath(import.meta.url)), "..", "public");
 const MIME = { ".html": "text/html", ".css": "text/css", ".js": "text/javascript", ".svg": "image/svg+xml" };
 
-export function startServer(store, port = 4317) {
+// 4317/4318 are OpenTelemetry's reserved OTLP ports — anyone running an otel collector,
+// Datadog agent or Grafana Alloy already holds them. 7317 is unassigned.
+export const DEFAULT_PORT = 7317;
+
+export function startServer(store, port = DEFAULT_PORT) {
   const clients = new Set();
 
   // Every mutation, whoever made it, pushes the whole board to every open tab. The board
@@ -21,7 +25,22 @@ export function startServer(store, port = 4317) {
     const payload = `data: ${JSON.stringify(board(store))}\n\n`;
     for (const res of clients) res.write(payload);
   };
-  store.onChange = broadcast;
+
+  // The agent runs as a SEPARATE PROCESS (--mcp) against the same database file, so its
+  // writes never pass through this server and cannot call broadcast() directly. Without
+  // this poll the board sits stale until you touch it yourself — which is the one moment
+  // the product is meant to shine. SQLite's data_version changes only on writes from
+  // ANOTHER connection, so this is exact rather than a guess, and costs nothing when idle.
+  let lastVersion = store.dataVersion();
+  const watch = setInterval(() => {
+    if (!clients.size) return;
+    const v = store.dataVersion();
+    if (v !== lastVersion) {
+      lastVersion = v;
+      broadcast();
+    }
+  }, 400);
+  watch.unref();
 
   const server = createServer(async (req, res) => {
     const url = new URL(req.url, "http://localhost");
@@ -94,6 +113,19 @@ export function startServer(store, port = 4317) {
       if (e.code === "ENOENT") return json(404, { error: "not found" });
       json(500, { error: e.message });
     }
+  });
+
+  // A busy port must not surface as a raw stacktrace after a cheerful success line.
+  server.on("error", (e) => {
+    if (e.code === "EADDRINUSE" || e.code === "EACCES") {
+      console.error(
+        `\nPort ${port} is already in use.\n` +
+          `Something else is on it — try: npx @juvina/sticky --port ${port + 1}\n`
+      );
+    } else {
+      console.error(`\nSTICKY could not start: ${e.message}\n`);
+    }
+    process.exit(1);
   });
 
   // Loopback only. Never 0.0.0.0 — the board is nobody else's business.

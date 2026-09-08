@@ -17,10 +17,19 @@ export const COLUMNS = ["pinned", "active", "archive"];
 export const TYPES = ["constraint", "decision", "state", "manual"];
 
 export class Store {
-  constructor(dbPath = join(homedir(), ".sticky", "store.db"), activeCap = 10) {
+  /**
+   * @param pinnedCap Pinned rules are permanent, but "permanent" cannot mean "unbounded" —
+   *   an agent posting constraints is doing the natural thing, and an uncapped pinned column
+   *   grows the prompt forever, which is the exact failure this product exists to prevent.
+   *   Pinned does not TUMBLE (a rule silently vanishing would be worse), so instead the cap
+   *   REFUSES the write and tells the agent to retire one first. A hard limit the human can
+   *   see beats a soft one nobody notices.
+   */
+  constructor(dbPath = join(homedir(), ".sticky", "store.db"), activeCap = 10, pinnedCap = 15) {
     mkdirSync(dirname(dbPath), { recursive: true });
     this.db = new DatabaseSync(dbPath);
     this.activeCap = activeCap;
+    this.pinnedCap = pinnedCap;
     this.#migrate();
   }
 
@@ -50,6 +59,12 @@ export class Store {
     if (!content || !content.trim()) throw new Error("content is required");
     if (!COLUMNS.includes(column)) throw new Error(`unknown column: ${column}`);
     if (!TYPES.includes(type)) throw new Error(`unknown type: ${type}`);
+
+    if (column === "pinned" && this.list("pinned").length >= this.pinnedCap) {
+      throw new Error(
+        `the pinned column is full (${this.pinnedCap} rules) — archive one before adding another`
+      );
+    }
 
     const now = Date.now();
     const nextPos =
@@ -111,6 +126,13 @@ export class Store {
     const card = this.get(id);
     if (!card) return null;
 
+    // Dragging must not be a back door around the pinned cap.
+    if (column === "pinned" && card.column !== "pinned" && this.list("pinned").length >= this.pinnedCap) {
+      throw new Error(
+        `the pinned column is full (${this.pinnedCap} rules) — archive one before adding another`
+      );
+    }
+
     const nextPos =
       (this.db.prepare(`SELECT COALESCE(MAX(position), 0) + 1 AS p FROM cards WHERE column = ?`)
         .get(column)?.p) ?? 1;
@@ -148,6 +170,15 @@ export class Store {
 
   purgeArchive() {
     return this.db.prepare(`DELETE FROM cards WHERE column = 'archive'`).run().changes;
+  }
+
+  /**
+   * SQLite's own change counter. It only moves when a DIFFERENT connection commits, which
+   * is exactly the case we care about: the agent process writing while the board is open.
+   * Cheaper and more honest than watching the file, which lies about WAL and journal churn.
+   */
+  dataVersion() {
+    return this.db.prepare("PRAGMA data_version").get().data_version;
   }
 
   /** Rough token estimate for the header badge. ~4 chars per token is close enough. */
